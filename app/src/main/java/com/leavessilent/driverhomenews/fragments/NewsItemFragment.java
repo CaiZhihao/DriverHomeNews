@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -34,7 +35,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewsItemFragment extends Fragment implements Handler.Callback {
+public class NewsItemFragment extends Fragment implements Handler.Callback, ViewPager.OnPageChangeListener {
 
     private NewsDatabaseDB mDatabaseDB;
 
@@ -89,9 +90,19 @@ public class NewsItemFragment extends Fragment implements Handler.Callback {
     // ListView的header
     private View mHeader;
 
+    // viewpager的新闻地址
+    private String mAdUrlString;
+    private int mAdType;
+
+    public void setAdUrlStringAndType(String adUrlString, int type) {
+        mAdUrlString = adUrlString;
+        mAdType = type;
+    }
+
     public void setUrlString(String urlString) {
         mUrlString = urlString;
     }
+
 
     public NewsItemFragment() {
         // Required empty public constructor
@@ -122,22 +133,81 @@ public class NewsItemFragment extends Fragment implements Handler.Callback {
         mListView.setAdapter(mNewsAdapter);
 
         mHeader = LayoutInflater.from(getContext()).inflate(R.layout.list_header_layout, mListView, false);
-        mListView.addHeaderView(mHeader);
 
-        initData();
+        mAdTitle = (TextView) mHeader.findViewById(R.id.viewpager_ad_title);
+
+        // 初始化viewpager指示器
+        // 初始化广告页viewpager
+        initAdViewPager();
+        mListView.addHeaderView(mHeader);
+        initListView();
     }
 
-    public void initData() {
+    private void initRadioButtonList() {
+        mViewStub = (ViewStub) mHeader.findViewById(R.id.viewstub_dot);
+        mViewStub.inflate();
+
+        mRadioButtonList = new ArrayList<>();
+        mFirstDot = (RadioButton) mHeader.findViewById(R.id.rb_dot_first);
+        mSecondDot = (RadioButton) mHeader.findViewById(R.id.rb_dot_second);
+        mThirdDot = (RadioButton) mHeader.findViewById(R.id.rb_dot_third);
+        mAdTitle = ((TextView) mHeader.findViewById(R.id.viewpager_ad_title));
+
+        mRadioButtonList.add(mFirstDot);
+        mRadioButtonList.add(mSecondDot);
+        mRadioButtonList.add(mThirdDot);
+    }
+
+    private void initAdViewPager() {
+        mAdNewsViewPager = (ViewPager) mHeader.findViewById(R.id.vp_ad);
+        mAdNewsAdapter = new AdNewsAdapter(getChildFragmentManager(), mAdData);
+        mAdNewsViewPager.setAdapter(mAdNewsAdapter);
+
+        // 首先从数据库获取,没有则网络请求
+        List<News> newsList = mDatabaseDB.getNewsList(mAdType);
+        if (newsList.size() > 0) {
+            mAdNewsList.addAll(newsList);
+            mHandler.sendEmptyMessage(LOAD_VIEWPAGER);
+        } else {
+            HttpUtils.getStringAsync(mAdUrlString, new HttpUtils.RequestCallback() {
+                @Override
+                public void onFailure() {
+
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    if (result != null) {
+                        List<News> newsList = JSONUtils.getNewsFromJson(result, mAdType);
+                        mDatabaseDB.saveNewsList(newsList);
+                        mAdNewsList.addAll(newsList);
+                        mHandler.sendEmptyMessage(LOAD_VIEWPAGER);
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            });
+        }
+
+
+        mAdNewsViewPager.addOnPageChangeListener(this);
+        mAdNewsViewPager.setCurrentItem(0);
+    }
+
+    public void initListView() {
+        // 先从数据库中获取，如果没有则网络请求
         List<News> newsList = mDatabaseDB.getNewsList(type);
         if (newsList.size() > 0) {
             mNewsList.addAll(newsList);
             mNewsAdapter.notifyDataSetChanged();
         } else {
-            Log.e(TAG, "initData: " + mUrlString);
             HttpUtils.getStringAsync(mUrlString, new HttpUtils.RequestCallback() {
                 @Override
                 public void onFailure() {
-                    Toast.makeText(ImageLoader.getContext(), "网络错误，请稍后再试", Toast.LENGTH_SHORT).show();
+
                 }
 
                 @Override
@@ -163,6 +233,18 @@ public class NewsItemFragment extends Fragment implements Handler.Callback {
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
             case LOAD_VIEWPAGER:
+                // 如果viewpager
+                if (mAdNewsList.size() > 1)
+                    initRadioButtonList();
+                for (int i = 0; i < mAdNewsList.size(); i++) {
+                    News news = mAdNewsList.get(i);
+                    AdNewsFragment fragment = new AdNewsFragment();
+                    Bundle args = new Bundle();
+                    args.putParcelable("news", news);
+                    fragment.setArguments(args);
+                    mAdData.add(fragment);
+                }
+                mAdNewsAdapter.update(mAdData);
                 break;
             case LOAD_LISTVIEW:
                 mNewsAdapter.notifyDataSetChanged();
@@ -175,4 +257,22 @@ public class NewsItemFragment extends Fragment implements Handler.Callback {
     public void setType(int type) {
         this.type = type;
     }
+
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        mAdTitle.setText(mAdNewsList.get(position).getTitle());
+        if (mAdNewsList.size() > 1)
+            mRadioButtonList.get(position).setChecked(true);
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+    }
+
 }

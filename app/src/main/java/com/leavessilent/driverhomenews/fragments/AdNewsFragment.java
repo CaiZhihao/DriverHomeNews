@@ -2,6 +2,7 @@ package com.leavessilent.driverhomenews.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import com.leavessilent.mylibrary.ImageLoader;
 public class AdNewsFragment extends Fragment {
 
 
-    private View mView;
+    private static final String TAG = AdNewsFragment.class.getSimpleName();
 
     public AdNewsFragment() {
         // Required empty public constructor
@@ -25,11 +26,11 @@ public class AdNewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_ad_news, container, false);
+        View view = inflater.inflate(R.layout.fragment_ad_news, container, false);
         Bundle arguments = getArguments();
         News news = arguments.getParcelable("news");
-        ImageView imageView = (ImageView) mView.findViewById(R.id.fragment_ad_image);
+        ImageView imageView = (ImageView) view.findViewById(R.id.fragment_ad_image);
         ImageLoader.display(imageView, news.getIcon(), 320, 200);
-        return mView;
+        return view;
     }
 }

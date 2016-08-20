@@ -7,19 +7,19 @@
         android:id="@+id/vp_ad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:background="#4dac4d">
+        android:adjustViewBounds="true">
 
     </android.support.v4.view.ViewPager>
 
 
     <TextView
         android:id="@+id/viewpager_ad_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_gravity="bottom|left"
-        android:background="#55ec6060"
-        android:text="Android"/>
+        android:background="#66e92828"
+        android:text="Android"
+        android:textColor="#fff"/>
 
     <ViewStub
         android:id="@+id/viewstub_dot"

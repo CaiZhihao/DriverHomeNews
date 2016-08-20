@@ -1,18 +1,14 @@
 package com.leavessilent.driverhomenews.fragments;
 
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +31,6 @@ import java.util.List;
  */
 public class NewsFragment extends Fragment {
 
-
-    private static final String TAG = NewsFragment.class.getSimpleName();
     // 初始化控件
     private Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
@@ -44,23 +38,43 @@ public class NewsFragment extends Fragment {
     private ListView mLeftMenuView;
     private String[] data = {"List Item 01", "List Item 02", "List Item 03", "List Item 04", "List Item 05"};
     private ArrayAdapter mAdapter;
-    private TextView mTitleText;
+    private TextView mAdTitleText;
     private ViewStub mViewStub;
     private View mView;
 
 
     // TabLayout标题
     private String[] titles = {"最新", "硬件", "软件", "手机", "科技"};
-    private String[] urls = {Urls.URL_NEWS_ITEM_NEWEST,
+    // 新闻列表的url
+    private String[] urls = {
+            Urls.URL_NEWS_ITEM_NEWEST,
             Urls.URL_NEWS_ITEM_HARDWARE,
             Urls.URL_NEWS_ITEM_SOFTWARE,
             Urls.URL_NEWS_ITEM_MOBILE,
             Urls.URL_NEWS_ITEM_SCIENCE};
-    private int[] type = {Constants.TYPE_NEWS_ITEM_NEWEST,
+    // 新闻列表type
+    private int[] type = {
+            Constants.TYPE_NEWS_ITEM_NEWEST,
             Constants.TYPE_NEWS_ITEM_HARDWARE,
             Constants.TYPE_NEWS_ITEM_SOFTWARE,
             Constants.TYPE_NEWS_ITEM_MOBILE,
             Constants.TYPE_NEWS_ITEM_SCIENCE};
+
+
+    // 广告新闻的列表
+    private String[] adUrls = {
+            Urls.URL_NEWS_ITEM_NEWEST_AD,
+            Urls.URL_NEWS_ITEM_HARDWARE_AD,
+            Urls.URL_NEWS_ITEM_SOFTWARE_AD,
+            Urls.URL_NEWS_ITEM_MOBILE_AD,
+            Urls.URL_NEWS_ITEM_SCIENCE_AD};
+    private int adTypes[] = {
+            Constants.TYPE_NEWS_ITEM_NEWEST_AD,
+            Constants.TYPE_NEWS_ITEM_HARDWARE_AD,
+            Constants.TYPE_NEWS_ITEM_SOFTWARE_AD,
+            Constants.TYPE_NEWS_ITEM_MOBILE_AD,
+            Constants.TYPE_NEWS_ITEM_SCIENCE_AD
+    };
 
     private ViewPager mNewsViewPager;
 
@@ -116,8 +130,8 @@ public class NewsFragment extends Fragment {
         mData = new ArrayList<>();
 
         for (int i = 0; i < titles.length; i++) {
-            Log.e(TAG, "initView: " + urls[i]);
             NewsItemFragment fragment = new NewsItemFragment();
+            fragment.setAdUrlStringAndType(adUrls[i], adTypes[i]);
             fragment.setUrlString(urls[i]);
             fragment.setType(type[i]);
             mData.add(fragment);

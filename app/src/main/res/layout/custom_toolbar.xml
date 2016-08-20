@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   android:id="@+id/tl_custom"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   android:background="#ff0000"
+                                   android:minHeight="?attr/actionBarSize"
+                                   app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <!--使用ViewStub进行布局优化-->
+
+    <ViewStub
+        android:id="@+id/viewstub_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout="@layout/viewstub_layout"/>
+
+    <TextView
+        android:id="@+id/tl_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"/>
+</android.support.v7.widget.Toolbar>

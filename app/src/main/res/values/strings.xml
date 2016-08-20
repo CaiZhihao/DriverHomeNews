@@ -8,4 +8,7 @@
     <string name="radio_btn_pic">图片</string>
     <string name="radio_brn_evaluating">评测</string>
     <string name="radio_btn_news">新闻</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

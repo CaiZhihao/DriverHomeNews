@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_news_rg"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/rb_dot_first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/radio_btn_selector"
+        android:button="@null"
+        android:checked="true"
+        android:gravity="center"/>
+
+    <RadioButton
+        android:id="@+id/rb_dot_second"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/radio_btn_selector"
+        android:button="@null"
+        android:gravity="center"/>
+
+    <RadioButton
+        android:id="@+id/rb_dot_third"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/radio_btn_selector"
+        android:button="@null"
+        android:gravity="center"/>
+</RadioGroup>

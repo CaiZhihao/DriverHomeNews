@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         //将所有的fragment隐藏
         hideFragmentList(mFragmentList);
+
+        showFragment(0);
+
     }
 
     /**

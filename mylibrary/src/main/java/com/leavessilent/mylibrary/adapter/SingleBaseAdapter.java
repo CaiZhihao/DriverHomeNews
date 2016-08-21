@@ -30,18 +30,16 @@ public abstract class SingleBaseAdapter<T> extends BaseAdapter {
         mLayoutId = layoutId;
     }
 
-    public void setData(List<T> data) {
-        mData = data;
-    }
-
     public void addData(List<T> data) {
         mData.addAll(data);
+        notifyDataSetChanged();
     }
 
     public void updateData(List<T> data) {
         if (data != null)
             mData.clear();
         mData.addAll(data);
+        notifyDataSetChanged();
     }
 
     @Override

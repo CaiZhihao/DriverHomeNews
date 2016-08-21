@@ -29,6 +29,6 @@ public class NewsAdapter extends SingleBaseAdapter<News> {
         TextView editor = (TextView) holder.getView(R.id.list_news_editor);
         ImageLoader.display(imageView, item.getIcon(), 100, 75);
         title.setText(item.getTitle());
-        editor.setText(item.getEditor() + " || " + item.getPostdate());
+        editor.setText(item.getEditor() + " | " + item.getPostdate());
     }
 }

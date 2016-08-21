@@ -16,6 +16,7 @@ public class Constants {
     public static final int TYPE_NEWS_ITEM_MOBILE_AD = 13;
     public static final int TYPE_NEWS_ITEM_SCIENCE_AD = 14;
 
+
     public static final int TYPE_EVALUATE = 5;
     public static final int TYPE_PICTURE = 6;
     public static final int TYPE_COMMENT_DAY = 7;

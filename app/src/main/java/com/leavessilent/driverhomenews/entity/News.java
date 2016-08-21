@@ -14,19 +14,23 @@ public class News implements Parcelable {
     private String editor;
     private String desc;
     private String icon;
+    private String bigimgsrc;
+    private String smallimgsrc;
     private String postdate;
     private int type;
 
     public News() {
     }
 
-    public News(int id, String contentt, String title, String editor, String desc, String icon, String postdate, int type) {
+    public News(int id, String contentt, String title, String editor, String desc, String icon, String bigimgsrc, String smallimgsrc, String postdate, int type) {
         this.id = id;
         this.contentt = contentt;
         this.title = title;
         this.editor = editor;
         this.desc = desc;
         this.icon = icon;
+        this.bigimgsrc = bigimgsrc;
+        this.smallimgsrc = smallimgsrc;
         this.postdate = postdate;
         this.type = type;
     }
@@ -79,6 +83,22 @@ public class News implements Parcelable {
         this.icon = icon;
     }
 
+    public String getBigimgsrc() {
+        return bigimgsrc;
+    }
+
+    public void setBigimgsrc(String bigimgsrc) {
+        this.bigimgsrc = bigimgsrc;
+    }
+
+    public String getSmallimgsrc() {
+        return smallimgsrc;
+    }
+
+    public void setSmallimgsrc(String smallimgsrc) {
+        this.smallimgsrc = smallimgsrc;
+    }
+
     public String getPostdate() {
         return postdate;
     }
@@ -106,6 +126,8 @@ public class News implements Parcelable {
         editor = in.readString();
         desc = in.readString();
         icon = in.readString();
+        bigimgsrc = in.readString();
+        smallimgsrc = in.readString();
         postdate = in.readString();
         type = in.readInt();
     }
@@ -135,6 +157,8 @@ public class News implements Parcelable {
         dest.writeString(editor);
         dest.writeString(desc);
         dest.writeString(icon);
+        dest.writeString(bigimgsrc);
+        dest.writeString(smallimgsrc);
         dest.writeString(postdate);
         dest.writeInt(type);
     }

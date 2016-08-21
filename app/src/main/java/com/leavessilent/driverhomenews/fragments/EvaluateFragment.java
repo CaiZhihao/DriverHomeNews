@@ -69,9 +69,6 @@ public class EvaluateFragment extends Fragment implements PullToRefreshBase.OnRe
         if (!hidden) {
             mMainActivity.setTitleText("评测");
             mMainActivity.unShowIcon();
-            ActionBar actionBar = mMainActivity.getSupportActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setHomeButtonEnabled(false);
         }
     }
 

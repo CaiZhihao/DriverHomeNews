@@ -180,7 +180,7 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
             mAdNewsList.addAll(newsList);
             mHandler.sendEmptyMessage(LOAD_VIEWPAGER);
         } else {
-            getPictureNewsFromInternet(State.UP);
+            getPictureNewsFromInternet(State.DOWN);
         }
 
 
@@ -227,7 +227,7 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
             mNewsList.addAll(newsList);
             mNewsAdapter.notifyDataSetChanged();
         } else {
-            getNewsDataFromInternet(State.UP);
+            getNewsDataFromInternet(State.DOWN);
         }
     }
 

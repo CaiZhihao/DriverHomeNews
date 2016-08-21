@@ -1,6 +1,7 @@
 package com.leavessilent.driverhomenews.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.leavessilent.driverhomenews.R;
+import com.leavessilent.driverhomenews.activities.MainActivity;
 import com.leavessilent.driverhomenews.adapters.CommentViewAdapter;
 import com.leavessilent.driverhomenews.common.Constants;
 import com.leavessilent.driverhomenews.common.Urls;
@@ -28,6 +30,8 @@ public class CommentFragment extends Fragment {
     private List<Fragment> mData;
     private TabLayout mTabLayout;
 
+    private MainActivity mMainActivity;
+
     private String titles[] = {"日热梦评论", "周热门评论", "我的评论"};
     private CommentViewAdapter mAdapter;
 
@@ -35,6 +39,13 @@ public class CommentFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MainActivity) {
+            mMainActivity = (MainActivity) context;
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +54,15 @@ public class CommentFragment extends Fragment {
         mView = inflater.inflate(R.layout.fragment_comment, container, false);
         initView();
         return mView;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            mMainActivity.setTitleText("评论");
+            mMainActivity.unShowIcon();
+        }
     }
 
     private void initView() {

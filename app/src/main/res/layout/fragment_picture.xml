@@ -1,7 +1,11 @@
-<com.handmark.pulltorefresh.library.PullToRefreshListView xmlns:android="http://schemas.android.com/apk/res/android"
-                                                          xmlns:tools="http://schemas.android.com/tools"
-                                                          android:id="@+id/refresh_lv_picture"
-                                                          android:layout_width="match_parent"
-                                                          android:layout_height="match_parent"
-                                                          tools:context="com.leavessilent.driverhomenews.fragments.PictureFragment">
+<com.handmark.pulltorefresh.library.PullToRefreshListView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/refresh_lv_picture"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:ptrAnimationStyle="flip"
+    app:ptrDrawable="@drawable/indicator_arrow"
+    tools:context="com.leavessilent.driverhomenews.fragments.PictureFragment">
 </com.handmark.pulltorefresh.library.PullToRefreshListView>

@@ -2,12 +2,14 @@ package com.leavessilent.driverhomenews.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -15,6 +17,7 @@ import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.leavessilent.driverhomenews.R;
+import com.leavessilent.driverhomenews.activities.DetailActivity;
 import com.leavessilent.driverhomenews.activities.MainActivity;
 import com.leavessilent.driverhomenews.adapters.EvaluateNewsAdapter;
 import com.leavessilent.driverhomenews.common.Constants;
@@ -32,7 +35,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EvaluateFragment extends Fragment implements PullToRefreshBase.OnRefreshListener2 {
+public class EvaluateFragment extends Fragment implements PullToRefreshBase.OnRefreshListener2, AdapterView.OnItemClickListener {
 
 
     private View mView;
@@ -97,6 +100,7 @@ public class EvaluateFragment extends Fragment implements PullToRefreshBase.OnRe
             getDataFromInternet(State.UP);
         }
 
+        mEvaluateListView.setOnItemClickListener(this);
 
     }
 
@@ -130,6 +134,15 @@ public class EvaluateFragment extends Fragment implements PullToRefreshBase.OnRe
                 mRefreshListView.onRefreshComplete();
             }
         });
+    }
+
+    // ----------------------------因为我们为ListView设置了Headerview，所以这里的position应该减一------------------------------------
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.putExtra("id", mData.get(position - 1).getId());
+        intent.putExtra("type", Constants.TYPE_EVALUATE);
+        startActivity(intent);
     }
 
 

@@ -40,7 +40,6 @@ public class JSONUtils {
             }.getType());
             for (Comment comment : commentList) {
                 comment.setType(type);
-                Log.e(TAG, "getCommentList: " + comment.getSimtitle());
             }
             return commentList;
         } catch (JSONException e) {
@@ -48,4 +47,15 @@ public class JSONUtils {
         }
         return null;
     }
+
+    public static News getDetaildNews(String json, int type) {
+        Gson gson = new Gson();
+        List<News> newsList = gson.fromJson(json, new TypeToken<List<News>>() {
+        }.getType());
+        for (News news : newsList) {
+            news.setType(type);
+        }
+        return newsList.get(0);
+    }
+
 }

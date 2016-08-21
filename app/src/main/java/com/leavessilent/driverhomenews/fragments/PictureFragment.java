@@ -2,17 +2,20 @@ package com.leavessilent.driverhomenews.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.leavessilent.driverhomenews.R;
+import com.leavessilent.driverhomenews.activities.DetailActivity;
 import com.leavessilent.driverhomenews.activities.MainActivity;
 import com.leavessilent.driverhomenews.adapters.EvaluateNewsAdapter;
 import com.leavessilent.driverhomenews.adapters.PictureNewsAdapter;
@@ -29,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PictureFragment extends Fragment implements PullToRefreshBase.OnRefreshListener2 {
+public class PictureFragment extends Fragment implements PullToRefreshBase.OnRefreshListener2, AdapterView.OnItemClickListener {
 
 
     private View mView;
@@ -89,6 +92,8 @@ public class PictureFragment extends Fragment implements PullToRefreshBase.OnRef
             getDataFromInternet(State.UP);
         }
 
+        mEvaluateListView.setOnItemClickListener(this);
+
     }
 
     @Override
@@ -99,6 +104,15 @@ public class PictureFragment extends Fragment implements PullToRefreshBase.OnRef
     @Override
     public void onPullUpToRefresh(PullToRefreshBase refreshView) {
         getDataFromInternet(State.UP);
+    }
+
+    // -----------------------ListView的Item点击回调--------------------------------------------------------------
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.putExtra("id", mData.get(position - 1).getId());
+        intent.putExtra("type", Constants.TYPE_PICTURE);
+        startActivity(intent);
     }
 
     private enum State {

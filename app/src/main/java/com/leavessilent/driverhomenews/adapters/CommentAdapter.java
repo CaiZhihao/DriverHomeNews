@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.leavessilent.driverhomenews.R;
+import com.leavessilent.driverhomenews.common.Constants;
 import com.leavessilent.driverhomenews.common.Urls;
 import com.leavessilent.driverhomenews.entity.Comment;
 import com.leavessilent.mylibrary.adapter.SingleBaseAdapter;
@@ -17,8 +18,15 @@ import java.util.List;
 /**
  * Created by Leavessilent on 2016/8/21.
  */
-public class CommentAdapter extends SingleBaseAdapter<Comment> {
+public class CommentAdapter extends SingleBaseAdapter<Comment> implements View.OnClickListener {
     private int postion;
+
+    private OnTitleClickListener mListener;
+
+
+    public void setListener(OnTitleClickListener listener) {
+        mListener = listener;
+    }
 
     public CommentAdapter(Context context, List<Comment> data, int layoutId) {
         super(context, data, layoutId);
@@ -43,5 +51,19 @@ public class CommentAdapter extends SingleBaseAdapter<Comment> {
         content.loadDataWithBaseURL(null, item.getContent(), "text/html", "utf-8", null);
         username.setText(item.getUsername() + " | " + item.getPostdate());
         opinion.setText("支持[" + item.getSupport() + "] 反对[" + item.getOppose() + "]");
+
+        title.setTag(item.getId());
+        title.setFocusable(true);
+        title.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        mListener.onTitleClick(v);
+    }
+
+
+    public interface OnTitleClickListener {
+        void onTitleClick(View view);
     }
 }

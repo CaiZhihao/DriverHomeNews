@@ -9,7 +9,7 @@ import android.os.Parcelable;
 public class News implements Parcelable {
 
     private int id;
-    private String contentt;
+    private String content;
     private String title;
     private String editor;
     private String desc;
@@ -24,7 +24,7 @@ public class News implements Parcelable {
 
     public News(int id, String contentt, String title, String editor, String desc, String icon, String bigimgsrc, String smallimgsrc, String postdate, int type) {
         this.id = id;
-        this.contentt = contentt;
+        this.content = contentt;
         this.title = title;
         this.editor = editor;
         this.desc = desc;
@@ -43,12 +43,12 @@ public class News implements Parcelable {
         this.id = id;
     }
 
-    public String getContentt() {
-        return contentt;
+    public String getContent() {
+        return content;
     }
 
-    public void setContentt(String contentt) {
-        this.contentt = contentt;
+    public void setContent(String contentt) {
+        this.content = contentt;
     }
 
     public String getTitle() {
@@ -121,7 +121,7 @@ public class News implements Parcelable {
 
     protected News(Parcel in) {
         id = in.readInt();
-        contentt = in.readString();
+        content = in.readString();
         title = in.readString();
         editor = in.readString();
         desc = in.readString();
@@ -152,7 +152,7 @@ public class News implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeString(contentt);
+        dest.writeString(content);
         dest.writeString(title);
         dest.writeString(editor);
         dest.writeString(desc);

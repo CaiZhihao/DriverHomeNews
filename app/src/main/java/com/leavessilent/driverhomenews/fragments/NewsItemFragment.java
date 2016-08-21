@@ -1,6 +1,7 @@
 package com.leavessilent.driverhomenews.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -21,8 +23,10 @@ import android.widget.Toast;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.leavessilent.driverhomenews.R;
+import com.leavessilent.driverhomenews.activities.DetailActivity;
 import com.leavessilent.driverhomenews.adapters.AdNewsAdapter;
 import com.leavessilent.driverhomenews.adapters.NewsAdapter;
+import com.leavessilent.driverhomenews.common.Constants;
 import com.leavessilent.driverhomenews.db.NewsDatabaseDB;
 import com.leavessilent.driverhomenews.entity.News;
 import com.leavessilent.driverhomenews.utils.JSONUtils;
@@ -35,7 +39,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewsItemFragment extends Fragment implements Handler.Callback, ViewPager.OnPageChangeListener {
+public class NewsItemFragment extends Fragment implements Handler.Callback, ViewPager.OnPageChangeListener, AdapterView.OnItemClickListener, View.OnTouchListener, PullToRefreshBase.OnRefreshListener2 {
 
     private NewsDatabaseDB mDatabaseDB;
 
@@ -142,11 +146,17 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
         initAdViewPager();
         mListView.addHeaderView(mHeader);
         initListView();
+        initRadioButtonList();
+
+        mRefreshListView.setOnRefreshListener(this);
+        mListView.setOnItemClickListener(this);
+        mAdNewsViewPager.setOnTouchListener(this);
     }
 
     private void initRadioButtonList() {
         mViewStub = (ViewStub) mHeader.findViewById(R.id.viewstub_dot);
         mViewStub.inflate();
+        mViewStub.setVisibility(View.GONE);
 
         mRadioButtonList = new ArrayList<>();
         mFirstDot = (RadioButton) mHeader.findViewById(R.id.rb_dot_first);
@@ -170,32 +180,44 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
             mAdNewsList.addAll(newsList);
             mHandler.sendEmptyMessage(LOAD_VIEWPAGER);
         } else {
-            HttpUtils.getStringAsync(mAdUrlString, new HttpUtils.RequestCallback() {
-                @Override
-                public void onFailure() {
-
-                }
-
-                @Override
-                public void onSuccess(String result) {
-                    if (result != null) {
-                        List<News> newsList = JSONUtils.getNewsFromJson(result, mAdType);
-                        mDatabaseDB.saveNewsList(newsList);
-                        mAdNewsList.addAll(newsList);
-                        mHandler.sendEmptyMessage(LOAD_VIEWPAGER);
-                    }
-                }
-
-                @Override
-                public void onFinish() {
-
-                }
-            });
+            getPictureNewsFromInternet(State.UP);
         }
 
 
         mAdNewsViewPager.addOnPageChangeListener(this);
         mAdNewsViewPager.setCurrentItem(0);
+    }
+
+    private void getPictureNewsFromInternet(final State state) {
+        HttpUtils.getStringAsync(mAdUrlString, new HttpUtils.RequestCallback() {
+            @Override
+            public void onFailure() {
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                if (result != null) {
+                    List<News> newsList = JSONUtils.getNewsFromJson(result, mAdType);
+                    switch (state) {
+                        case UP:
+                            break;
+                        case DOWN:
+                            mDatabaseDB.deleteNewsList(mAdType);
+                            mDatabaseDB.saveNewsList(newsList);
+                            mAdNewsList.clear();
+                            mAdNewsList.addAll(newsList);
+                            break;
+                    }
+                    mHandler.sendEmptyMessage(LOAD_VIEWPAGER);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        });
     }
 
     public void initListView() {
@@ -205,28 +227,44 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
             mNewsList.addAll(newsList);
             mNewsAdapter.notifyDataSetChanged();
         } else {
-            HttpUtils.getStringAsync(mUrlString, new HttpUtils.RequestCallback() {
-                @Override
-                public void onFailure() {
-
-                }
-
-                @Override
-                public void onSuccess(String result) {
-                    if (result != null) {
-                        List<News> newsFromJson = JSONUtils.getNewsFromJson(result, type);
-                        mNewsAdapter.updateData(newsFromJson);
-                        mDatabaseDB.saveNewsList(newsFromJson);
-                    }
-                    mHandler.sendEmptyMessage(LOAD_LISTVIEW);
-                }
-
-                @Override
-                public void onFinish() {
-
-                }
-            });
+            getNewsDataFromInternet(State.UP);
         }
+    }
+
+    private void getNewsDataFromInternet(final State state) {
+        getPictureNewsFromInternet(state);
+        HttpUtils.getStringAsync(mUrlString, new HttpUtils.RequestCallback() {
+            @Override
+            public void onFailure() {
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                if (result != null) {
+                    List<News> newsFromJson = JSONUtils.getNewsFromJson(result, type);
+                    switch (state) {
+                        case UP:
+                            mDatabaseDB.saveNewsList(newsFromJson);
+                            mNewsAdapter.addData(newsFromJson);
+                            break;
+                        case DOWN:
+                            mDatabaseDB.deleteNewsList(type);
+                            mNewsAdapter.updateData(newsFromJson);
+                            mDatabaseDB.saveNewsList(newsFromJson);
+                            break;
+                    }
+                }
+                mHandler.sendEmptyMessage(LOAD_LISTVIEW);
+            }
+
+            @Override
+            public void onFinish() {
+                mRefreshListView.onRefreshComplete();
+            }
+        });
+
+
     }
 
 
@@ -236,7 +274,7 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
             case LOAD_VIEWPAGER:
                 // 如果viewpager
                 if (mAdNewsList.size() > 1)
-                    initRadioButtonList();
+                    mViewStub.setVisibility(View.VISIBLE);
                 for (int i = 0; i < mAdNewsList.size(); i++) {
                     News news = mAdNewsList.get(i);
                     AdNewsFragment fragment = new AdNewsFragment();
@@ -260,6 +298,7 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
     }
 
 
+    //--------------------图片新闻ViewPager的滑动监听------------------------
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         mAdTitle.setText(mAdNewsList.get(position).getTitle());
@@ -276,4 +315,58 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
     public void onPageScrollStateChanged(int state) {
     }
 
+
+    // ---------------------------------listview的item监听回调----------------------------------------------------
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.putExtra("id", mNewsList.get(position - 2).getId());
+        intent.putExtra("type", type);
+        startActivity(intent);
+    }
+
+    private int flag = 1;
+
+    //---------------------viewpager的onTouch回调-------------------------------------------
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.vp_ad:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        flag = 0;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        flag = 1;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (flag == 0) {
+                            Intent intent = new Intent(getActivity(), DetailActivity.class);
+                            int currentItem = mAdNewsViewPager.getCurrentItem();
+                            intent.putExtra("id", mAdNewsList.get(currentItem).getId());
+                            intent.putExtra("type", mAdType);
+                            startActivity(intent);
+                        }
+
+                }
+                break;
+        }
+        return false;
+    }
+
+
+    private enum State {
+        DOWN, UP
+    }
+
+    //---------------------PullToRefreshListView的上拉和下拉回调-------------------------------------
+    @Override
+    public void onPullDownToRefresh(PullToRefreshBase refreshView) {
+        getNewsDataFromInternet(State.DOWN);
+    }
+
+    @Override
+    public void onPullUpToRefresh(PullToRefreshBase refreshView) {
+        getNewsDataFromInternet(State.UP);
+    }
 }

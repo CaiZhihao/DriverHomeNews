@@ -1,5 +1,6 @@
 package com.leavessilent.driverhomenews.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.leavessilent.driverhomenews.R;
+import com.leavessilent.driverhomenews.activities.DetailActivity;
 import com.leavessilent.driverhomenews.adapters.CommentAdapter;
+import com.leavessilent.driverhomenews.common.Constants;
 import com.leavessilent.driverhomenews.db.NewsDatabaseDB;
 import com.leavessilent.driverhomenews.entity.Comment;
 import com.leavessilent.driverhomenews.utils.JSONUtils;
@@ -23,7 +26,7 @@ import java.util.List;
  * Created by Administrator on 2016/8/7.
  */
 
-public class CommentItemFragment extends Fragment {
+public class CommentItemFragment extends Fragment implements CommentAdapter.OnTitleClickListener {
 
     private View mView;
     private String mUrl;
@@ -59,13 +62,13 @@ public class CommentItemFragment extends Fragment {
         mAdapter = new CommentAdapter(getContext(), mData, R.layout.list_comment);
         mListView.setAdapter(mAdapter);
 
+        mAdapter.setListener(this);
         if (NetworkUtils.checkNetWork(getContext())) {
             mDatabaseDB.deleteCommentList(mType);
             getDataFromInternet();
         } else {
             initData();
         }
-
     }
 
     private void initData() {
@@ -101,4 +104,15 @@ public class CommentItemFragment extends Fragment {
     }
 
 
+    @Override
+    public void onTitleClick(View view) {
+        switch (view.getId()) {
+            case R.id.list_comment_title:
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra("id", (int) view.getTag());
+                intent.putExtra("type", mType);
+                startActivity(intent);
+                break;
+        }
+    }
 }

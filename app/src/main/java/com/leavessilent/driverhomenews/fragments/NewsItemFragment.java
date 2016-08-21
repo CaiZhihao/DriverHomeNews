@@ -132,9 +132,10 @@ public class NewsItemFragment extends Fragment implements Handler.Callback, View
         mNewsAdapter = new NewsAdapter(getContext(), mNewsList, R.layout.news_item);
         mListView.setAdapter(mNewsAdapter);
 
-        mHeader = LayoutInflater.from(getContext()).inflate(R.layout.list_header_layout, mListView, false);
 
+        mHeader = LayoutInflater.from(getContext()).inflate(R.layout.list_header_layout, mListView, false);
         mAdTitle = (TextView) mHeader.findViewById(R.id.viewpager_ad_title);
+
 
         // 初始化viewpager指示器
         // 初始化广告页viewpager

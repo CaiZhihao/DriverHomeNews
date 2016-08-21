@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.ViewStub;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         mPictureBtn.setOnCheckedChangeListener(this);
         mCommentBtn.setOnCheckedChangeListener(this);
 
-
+        mViewStub.inflate();
+        mViewStub.setVisibility(View.GONE);
         mToolbar.setTitleTextColor(Color.WHITE);
 
         mNewsFragment = new NewsFragment();
@@ -139,7 +141,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     public void showIcon() {
-        mViewStub.inflate();
+        mViewStub.setVisibility(View.VISIBLE);
+    }
+
+    public void unShowIcon() {
+        mViewStub.setVisibility(View.GONE);
     }
 
     @Override
@@ -161,4 +167,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             }
         }
     }
+
+
+    public void setToolbar(Toolbar toolbar) {
+        mToolbar = toolbar;
+    }
+
 }

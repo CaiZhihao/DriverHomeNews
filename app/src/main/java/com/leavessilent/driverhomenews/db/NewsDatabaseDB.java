@@ -64,4 +64,8 @@ public class NewsDatabaseDB {
             }
         }
     }
+
+    public void deleteNewsList(int type) {
+        mDb.execSQL("delete from news where type = ?", new Object[]{type});
+    }
 }

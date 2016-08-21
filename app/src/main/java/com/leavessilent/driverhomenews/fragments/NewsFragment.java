@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -36,10 +37,8 @@ public class NewsFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftMenuView;
-    private String[] data = {"List Item 01", "List Item 02", "List Item 03", "List Item 04", "List Item 05"};
+    private String[] data = {"Menu Item 01", "Menu Item 02", "Menu Item 03", "Menu Item 04", "Menu Item 05"};
     private ArrayAdapter mAdapter;
-    private TextView mAdTitleText;
-    private ViewStub mViewStub;
     private View mView;
 
 
@@ -82,6 +81,7 @@ public class NewsFragment extends Fragment {
     private List<Fragment> mData;
     private NewsViewAdapter mNewsViewAdapter;
     private TabLayout mNewsTab;
+    private MainActivity mMainActivity;
 
 
     public NewsFragment() {
@@ -93,12 +93,8 @@ public class NewsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof MainActivity) {
-            MainActivity main = (MainActivity) context;
-            mToolbar = main.getToolbar();
-            main.showIcon();
-            main.setTitleText("  驱家新闻");
-            main.getSupportActionBar().setHomeButtonEnabled(true);
-            main.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            mMainActivity = (MainActivity) context;
+            mToolbar = mMainActivity.getToolbar();
         }
     }
 
@@ -111,6 +107,7 @@ public class NewsFragment extends Fragment {
         return mView;
     }
 
+
     private void initView() {
 
         mDrawerLayout = (DrawerLayout) mView.findViewById(R.id.dl_left);
@@ -122,6 +119,7 @@ public class NewsFragment extends Fragment {
         mNewsViewPager = (ViewPager) mView.findViewById(R.id.viewpager_news);
 
         mDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout, mToolbar, R.string.open, R.string.close);
+
         mDrawerToggle.syncState();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, data);
@@ -143,4 +141,20 @@ public class NewsFragment extends Fragment {
         mNewsTab.setupWithViewPager(mNewsViewPager);
     }
 
+    /**
+     * 在fragment的hidden回调监听，来改变title，和是否显示home btn
+     *
+     * @param hidden
+     */
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            mMainActivity.showIcon();
+            mMainActivity.setTitleText("  驱家新闻");
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+        } else {
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+        }
+    }
 }
